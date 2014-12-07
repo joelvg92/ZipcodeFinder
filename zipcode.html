@@ -1,0 +1,109 @@
+	<!doctype html>
+	<html>
+	<head>
+	<title>zipcode</title>
+	<meta charset="utf-8" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<!-- Latest compiled and minified CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/custom.css">
+	</head>
+
+	<body>
+
+	<div class="container">
+
+	<div class="row">
+
+	<div class="col-md-6 col-md-offset-3 center">
+
+	<h1 class="center white">Zip code</h1>
+
+	<p class="lead center white">Enter your city below to get the zip code</p>
+
+	<form>
+
+	<div class="form-group">
+
+	<input type="text" class="form-control" name="address" id="address" placeholder="Eg.23 random street,randomtown" />
+
+	</div>
+
+	<button id="findMyzip" class="btn btn-success btn-lg">Find My zip</button>
+
+
+	</form>
+
+
+	<div id="success" class="alert alert-success">Success!</div>
+    <div id="success2" class="alert alert-success">Success!</div>
+	<div id="fail" class="alert alert-danger">Could not find zip for that city. Please try again.</div>
+
+	<div id="noCity" class="alert alert-danger">Please enter a city!</div>
+
+	</div>
+    </div>
+
+
+	</div>
+
+	<script src="js/jquery-1.11.0.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+	
+	$("#findMyzip").click(function(event){
+		
+		var result = 0;
+		
+		$(".alert").hide();
+		
+		event.preventDefault();
+		
+		$.ajax({
+		
+			type: "GET",
+			url: "https://maps.googleapis.com/maps/api/geocode/xml?address="+encodeURIComponent($('#address').val())+"&sensor=false&key=AIzaSyBt1NNqg7EQ1CnJquBwRKu_BYNmaUfcLZ0",
+			dataType: "xml",
+			success: processXML,
+			error: error
+		}); 
+		
+		function error(){
+		
+			$("#fail2").fadeIn();
+		
+		}
+			
+		function processXML(xml){
+			
+			$(xml).find("address_component").each(function() {
+			
+				if($(this).find("type").text() == "postal_code"){
+				
+				$('#success').html("The postcode for the area you searched is "+$(this).find('long_name').text()).fadeIn();
+					
+					result = 1;
+				}
+
+			});
+			
+			if(result==0){
+				
+				$("#fail").fadeIn();
+			}
+			
+		}	
+	});
+		
+		
+	
+    </script>
+	</body>
+	</html>
